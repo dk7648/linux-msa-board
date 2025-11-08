@@ -4,28 +4,28 @@ server:
 spring:
   application:
     name: user-service
-  config:
-    import: optional:file:.env[.properties]
-  profiles:
-    active: prod
+
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: jdbc:mysql://db-linux-msa-board.cr60oge6q5of.ap-northeast-2.rds.amazonaws.com:3306/linux-msa-board
+    username: admin
+    password: password1616
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
-      ddl-auto: none       # 테이블이 이미 있다면 none, 새로 만들면 create/update
-    show-sql: true         # SQL 콘솔 출력
-    properties:
-      hibernate:
-        format_sql: true   # SQL 출력 포멧
-
+      ddl-auto: update # (중요) DB 테이블 자동 생성/업데이트
+    show-sql: true
+    # (오류 방지를 위해 DB 종류를 명시적으로 지정)
+    database-platform: org.hibernate.dialect.MySQL8Dialect 
 
 eureka:
   client:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://localhost:8761/eureka
+
+# --- JWT 토큰 설정 ---
+token:
+  secret: "SOME_SUPER_SECRET_KEY_THAT_IS_VERY_LONG_AND_SECURE_FOR_HS256_ALGORITHM"
+  expiration_time: 86400000

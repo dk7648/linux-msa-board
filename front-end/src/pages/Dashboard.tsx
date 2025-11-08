@@ -121,7 +121,7 @@ function Dashboard() {
           >
             🔍 MSA 시각화
           </button>
-          <button className="nav-button" onClick={() => navigate('/posts')}>
+          <button className="nav-button" onClick={() => navigate('/articles-list')}>
             📝 게시글
           </button>
         </div>

@@ -35,7 +35,7 @@ public class SecurityConfig {
             // 5. (새 문법) URL별 접근 권한 설정
             .authorizeHttpRequests(authz -> authz
                 .requestMatchers("/login").permitAll() 
-                .requestMatchers("/users/signup").permitAll()
+                .requestMatchers("/users/**").permitAll()
                 .anyRequest().authenticated() // 나머지 모든 요청은 인증 필요
             );
             
