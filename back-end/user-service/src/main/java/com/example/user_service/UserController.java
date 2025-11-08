@@ -1,12 +1,19 @@
 package com.example.user_service;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
+@RequiredArgsConstructor
 public class UserController {
-    @GetMapping("/users")
-    public String hello() {
-        return "Hello from User-Service!";
+    private final UserRepository userRepository;
+    @GetMapping("/users/")
+    public List<User> showUsers() {
+        List<User> users = userRepository.findAll();
+        return users;
     }
 }
