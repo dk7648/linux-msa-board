@@ -1,5 +1,4 @@
-package com.example.user_service.config; // 1. 이 패키지 이름이 파일 위치와 일치하는지 확인하세요.
-
+package com.example.user_service.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -35,9 +34,8 @@ public class SecurityConfig {
 
             // 5. (새 문법) URL별 접근 권한 설정
             .authorizeHttpRequests(authz -> authz
-                // "antMatchers" -> "requestMatchers"로 변경됨
                 .requestMatchers("/login").permitAll() 
-                // .requestMatchers("/users/signup").permitAll() // (회원가입 경로가 있다면)
+                .requestMatchers("/users/signup").permitAll()
                 .anyRequest().authenticated() // 나머지 모든 요청은 인증 필요
             );
             
