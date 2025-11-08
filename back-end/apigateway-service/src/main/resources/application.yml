@@ -30,6 +30,11 @@ spring:
               uri: lb://ARTICLE-SERVICE
               predicates:
                   - Path=/articles/**
+
+            - id: comment-service
+              uri: lb://COMMENT-SERVICE
+              predicates:
+                - Path=/comments/**
     discovery:
       enabled: true
 
