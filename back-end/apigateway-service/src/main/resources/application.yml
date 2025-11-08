@@ -25,6 +25,11 @@ spring:
               uri: lb://USER-SERVICE
               predicates:
                 - Path=/users/**
+
+            - id: article-service
+              uri: lb://ARTICLE-SERVICE
+              predicates:
+                  - Path=/articles/**
     discovery:
       enabled: true
 
