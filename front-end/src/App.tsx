@@ -4,6 +4,8 @@ import Auth from './pages/Auth'
 import Dashboard from './pages/Dashboard'
 import Metrics from './pages/Metrics'
 import Loading from './components/Loading'
+import View from './pages/View'
+import Article from './pages/Article'
 
 // Protected Route Component
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -65,6 +67,25 @@ function App() {
               </ProtectedRoute>
             }
           />
+          {/*MSA시각화 추가*/}
+          <Route
+            path="/msa-visualization"
+            element={
+              <ProtectedRoute>
+                <View />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+          path="/articles-list"
+          element={
+            <ProtectedRoute>
+              <Article />
+            </ProtectedRoute>
+          }
+        />
+
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </AuthProvider>
