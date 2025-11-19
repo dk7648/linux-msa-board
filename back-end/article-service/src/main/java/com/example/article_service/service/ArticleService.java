@@ -3,6 +3,8 @@ package com.example.article_service.service;
 import com.example.article_service.domain.Article;
 import com.example.article_service.dto.ArticleCreateRequest;
 import com.example.article_service.dto.ArticleResponse;
+import com.example.article_service.exception.ArticleNotFoundException;
+import com.example.article_service.exception.UnauthorizedException;
 import com.example.article_service.repository.ArticleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +45,7 @@ public class ArticleService {
     @Transactional
     public ArticleResponse getArticle(Long articleId) {
         Article article = articleRepository.findById(articleId)
-                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다"));
+                .orElseThrow(() -> new ArticleNotFoundException(articleId));
 
         article.incrementViewCount();
         log.info("게시글 조회 - ID: {}, 조회수: {}", articleId, article.getViewCount());
@@ -55,10 +57,10 @@ public class ArticleService {
     @Transactional
     public void updateArticle(Long userId, Long articleId, ArticleCreateRequest request) {
         Article article = articleRepository.findById(articleId)
-                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다"));
+                .orElseThrow(() -> new ArticleNotFoundException(articleId));
 
         if (!article.getUserId().equals(userId)) {
-            throw new RuntimeException("권한이 없습니다");
+            throw new UnauthorizedException("게시글 수정 권한이 없습니다");
         }
 
         article.update(request.getTitle(), request.getContent());
@@ -69,10 +71,10 @@ public class ArticleService {
     @Transactional
     public void deleteArticle(Long userId, Long articleId) {
         Article article = articleRepository.findById(articleId)
-                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다"));
+                .orElseThrow(() -> new ArticleNotFoundException(articleId));
 
         if (!article.getUserId().equals(userId)) {
-            throw new RuntimeException("권한이 없습니다");
+            throw new UnauthorizedException("게시글 삭제 권한이 없습니다");
         }
 
         articleRepository.delete(article);
