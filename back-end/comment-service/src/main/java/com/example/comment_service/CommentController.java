@@ -1,12 +1,14 @@
 package com.example.comment_service;
 
 import com.example.comment_service.dto.CommentDto;
+import com.example.comment_service.dto.CommentResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,8 +33,8 @@ public class CommentController {
     }
 
     @GetMapping("/comments/article/{id}")
-    ResponseEntity<List<Comment>> getCommentsByArticle(@PathVariable Long id) {
-        List<Comment> result = commentRepository.findAllByArticleId(id);
+    ResponseEntity<List<CommentResponse>> getCommentsByArticle(@PathVariable Long id) {
+        List<CommentResponse> result = commentRepository.findAllByArticleId(id).stream().map(CommentResponse::new).toList();
         return ResponseEntity.ok(result);
     }
 
