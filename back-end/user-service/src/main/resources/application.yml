@@ -1,31 +1,36 @@
 server:
-  port: 9002
+  port: 9002  # 포트는 겹치지 않게 9002 유지
 
 spring:
   application:
-    name: user-service
+    name: user-service  # [중요] Gateway 설정(lb://USER-SERVICE)과 철자가 똑같아야 함!
 
   datasource:
-    url: jdbc:mysql://db-linux-msa-board.cr60oge6q5of.ap-northeast-2.rds.amazonaws.com:3306/linux-msa-board
+    # 님 AWS RDS 주소 (팀원들은 ${DB_URL}로 숨겼지만, 님은 직접 입력해도 됩니다)
+    url: jdbc:mysql://db-linux-msa-board.cr60oge6q5of.ap-northeast-2.rds.amazonaws.com:3306/USER?serverTimezone=Asia/Seoul&characterEncoding=UTF-8&useSSL=false
     username: admin
     password: password1616
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
-      ddl-auto: update # (중요) DB 테이블 자동 생성/업데이트
+      ddl-auto: update
     show-sql: true
-    # (오류 방지를 위해 DB 종류를 명시적으로 지정)
-    database-platform: org.hibernate.dialect.MySQL8Dialect 
+    properties:
+      hibernate:
+        format_sql: true  # 팀원 Article Service와 스타일 통일 (SQL 예쁘게 출력)
 
 eureka:
   client:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://localhost:8761/eureka  # Gateway와 주소 통일
+  instance:
+    prefer-ip-address: true  # [중요] AWS나 배포 환경에서 IP로 통신하기 위함
+    instance-id: ${spring.application.name}:${server.port} # 팀원들과 포맷 통일
 
-# --- JWT 토큰 설정 ---
+# JWT 토큰 설정 (로그인 기능이 있는 User Service에만 필요)
 token:
   secret: "SOME_SUPER_SECRET_KEY_THAT_IS_VERY_LONG_AND_SECURE_FOR_HS256_ALGORITHM"
   expiration_time: 86400000
