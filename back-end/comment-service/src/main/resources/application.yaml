@@ -1,9 +1,9 @@
 server:
-  port: 9004
+  port: 9006
 
 spring:
   application:
-    name: article-service
+    name: comment-service
   config:
     import: optional:file:.env[.properties]
   profiles:
