@@ -1,6 +1,8 @@
 package com.example.user_service.security;
 
-import com.example.user_service.service.UserService;
+// [수정됨] UserService가 위치한 실제 패키지 경로로 변경
+import com.example.user_service.UserService; 
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -10,8 +12,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-
 @Configuration
 @EnableWebSecurity
 public class WebSecurity {
@@ -40,10 +40,10 @@ public class WebSecurity {
 
             .authorizeHttpRequests(auth -> auth
                 // [중요] /users(가입), /login(로그인), /h2-console 등은 인증 없이 허용
-                .requestMatchers(new AntPathRequestMatcher("/users/**")).permitAll()
-                .requestMatchers(new AntPathRequestMatcher("/login")).permitAll()
-                .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
-                .requestMatchers(new AntPathRequestMatcher("/actuator/**")).permitAll() // 상태 확인용
+                .requestMatchers("/users/**").permitAll()
+                .requestMatchers("/login").permitAll()
+                .requestMatchers("/h2-console/**").permitAll()
+                .requestMatchers("/actuator/**").permitAll() // 상태 확인용
                 .anyRequest().authenticated()
             )
 
