@@ -5,19 +5,26 @@ spring:
   application:
     name: user-service
 
+  # --- [AWS 대신 H2 설정 사용] ---
   datasource:
-    url: jdbc:mysql://db-linux-msa-board.cr60oge6q5of.ap-northeast-2.rds.amazonaws.com:3306/linux-msa-board
-    username: admin
-    password: password1616
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password: 
 
   jpa:
     hibernate:
-      ddl-auto: update # (중요) DB 테이블 자동 생성/업데이트
+      ddl-auto: create-drop  # 켜질 때 만들고 꺼질 때 삭제 (테스트용)
     show-sql: true
-    # (오류 방지를 위해 DB 종류를 명시적으로 지정)
-    database-platform: org.hibernate.dialect.MySQL8Dialect 
-
+    database-platform: org.hibernate.dialect.H2Dialect
+  
+  # H2 콘솔 접속용 (http://localhost:9002/h2-console)
+  h2:
+    console:
+      enabled: true
+      settings:
+        web-allow-others: true
+        
 eureka:
   client:
     register-with-eureka: true
@@ -25,7 +32,6 @@ eureka:
     service-url:
       defaultZone: http://localhost:8761/eureka
 
-# --- JWT 토큰 설정 ---
 token:
   secret: "SOME_SUPER_SECRET_KEY_THAT_IS_VERY_LONG_AND_SECURE_FOR_HS256_ALGORITHM"
   expiration_time: 86400000
