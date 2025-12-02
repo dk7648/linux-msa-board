@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "DiscoveryServiceApplication",
+            "request": "launch",
+            "mainClass": "com.example.discovery_service.DiscoveryServiceApplication",
+            "projectName": "discovery-service"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-UserService<user-service>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.example.user_service.UserService",
+            "projectName": "user-service",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=63854 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=user-service"
+        }
+    ]
+}
