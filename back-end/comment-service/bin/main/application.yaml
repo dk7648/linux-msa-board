@@ -1,0 +1,31 @@
+server:
+  port: 9006
+
+spring:
+  application:
+    name: comment-service
+  config:
+    import: optional:file:.env[.properties]
+  profiles:
+    active: prod
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none       # 테이블이 이미 있다면 none, 새로 만들면 create/update
+    show-sql: true         # SQL 콘솔 출력
+    properties:
+      hibernate:
+        format_sql: true   # SQL 출력 포멧
+
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
