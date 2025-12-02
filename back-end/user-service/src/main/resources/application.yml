@@ -5,7 +5,26 @@ spring:
   application:
     name: user-service  # [중요] Gateway 설정(lb://USER-SERVICE)과 철자가 똑같아야 함!
 
+  # --- [AWS 대신 H2 설정 사용] ---
   datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password: 
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop  # 켜질 때 만들고 꺼질 때 삭제 (테스트용)
+    show-sql: true
+    database-platform: org.hibernate.dialect.H2Dialect
+  
+  # H2 콘솔 접속용 (http://localhost:9002/h2-console)
+  h2:
+    console:
+      enabled: true
+      settings:
+        web-allow-others: true
+        
     # 님 AWS RDS 주소 (팀원들은 ${DB_URL}로 숨겼지만, 님은 직접 입력해도 됩니다)
     url: jdbc:mysql://db-linux-msa-board.cr60oge6q5of.ap-northeast-2.rds.amazonaws.com:3306/USER?serverTimezone=Asia/Seoul&characterEncoding=UTF-8&useSSL=false
     username: admin

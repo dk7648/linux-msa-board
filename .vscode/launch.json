@@ -15,6 +15,7 @@
             "mainClass": "com.example.user_service.UserService",
             "projectName": "user-service",
             "args": "",
+            "envFile": "${workspaceFolder}/.env"
             "envFile": "${workspaceFolder}/.env",
             "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=63854 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=user-service"
         }
