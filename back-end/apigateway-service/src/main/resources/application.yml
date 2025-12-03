@@ -7,17 +7,20 @@ spring:
   cloud:
     gateway:
       globalcors:
+        add-to-simple-url-handler-mapping: true   # ⭐ 추가
         cors-configurations:
           '[/**]':
-            allowedOrigins: "*"
+            allowedOrigins:
+              - "http://localhost:5173"
             allowedMethods:
-              - GET
-              - POST
-              - PUT
-              - DELETE
-              - OPTIONS
-            allowedHeaders: "*"
+              - "*"
+            allowedHeaders:
+              - "*"
             allowCredentials: true
+            exposedHeaders:
+              - token
+              - Authorization
+
       server:
         webmvc:
           routes:
@@ -25,16 +28,15 @@ spring:
               uri: lb://USER-SERVICE
               predicates:
                 - Path=/users/**
-
             - id: article-service
               uri: lb://ARTICLE-SERVICE
               predicates:
-                  - Path=/articles/**
-
+                - Path=/articles/**
             - id: comment-service
               uri: lb://COMMENT-SERVICE
               predicates:
                 - Path=/comments/**
+
     discovery:
       enabled: true
 

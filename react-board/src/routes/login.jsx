@@ -1,16 +1,16 @@
 import { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+//import { useNavigate } from "react-router-dom";
 
 function Login() {
-  const navigate = useNavigate();
-  const [username, setUsername] = useState('');
+  //const navigate = useNavigate();
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const loginJWT = async () => {
     try {
-      const response = await axios.post('http://localhost:8080/api/member/login/jwt', {
-        username,
+      const response = await axios.post('http://localhost:9002/users/login', {
+        email,
         password
       }, {
         headers: {
@@ -18,7 +18,8 @@ function Login() {
         },
         withCredentials: true // 쿠키를 서버와 함께 자동으로 전송
       });
-
+      console.log('>> log >> ');
+      console.log(response);
       console.log(response.data); // JWT 토큰 또는 응답 메시지 출력
 
       const jwt = response.data.jwt;
@@ -35,10 +36,10 @@ function Login() {
   return (
     <div>
       <input
-        name="username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        placeholder="Username"
+        name="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="Email"
       />
       <input
         name="password"
