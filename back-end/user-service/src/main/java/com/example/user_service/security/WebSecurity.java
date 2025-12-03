@@ -1,8 +1,6 @@
 package com.example.user_service.security;
 
-// [수정됨] UserService가 위치한 실제 패키지 경로로 변경
-import com.example.user_service.UserService; 
-
+import com.example.user_service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -12,50 +10,55 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+
 @Configuration
 @EnableWebSecurity
 public class WebSecurity {
 
     private final UserService userService;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final Environment env;
 
-    public WebSecurity(Environment env, UserService userService, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public WebSecurity(Environment env, UserService userService) {
         this.env = env;
         this.userService = userService;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    }
+
+    @Bean
+    public static BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
     protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
-        // 1. AuthenticationManager 생성 (로그인 처리를 위해 필수)
-        AuthenticationManagerBuilder authenticationManagerBuilder = 
+        AuthenticationManagerBuilder authenticationManagerBuilder =
                 http.getSharedObject(AuthenticationManagerBuilder.class);
-        authenticationManagerBuilder.userDetailsService(userService).passwordEncoder(bCryptPasswordEncoder);
+        authenticationManagerBuilder.userDetailsService(userService).passwordEncoder(passwordEncoder());
         AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
 
         http
-            // [중요] CSRF 비활성화 (REST API에서는 보통 끔)
             .csrf(csrf -> csrf.disable())
-
             .authorizeHttpRequests(auth -> auth
-                // [중요] /users(가입), /login(로그인), /h2-console 등은 인증 없이 허용
+                .requestMatchers("/error").permitAll()
                 .requestMatchers("/users/**").permitAll()
                 .requestMatchers("/login").permitAll()
                 .requestMatchers("/h2-console/**").permitAll()
-                .requestMatchers("/actuator/**").permitAll() // 상태 확인용
-                .anyRequest().authenticated()
+                .requestMatchers("/actuator/**").permitAll()
+                .anyRequest().authenticated() // 나머지는 인증 필요
             )
-
-            // AuthenticationManager 등록
             .authenticationManager(authenticationManager)
+            // ▼▼▼ [필터 추가] 만든 필터를 여기에 등록! ▼▼▼
+            .addFilter(getAuthenticationFilter(authenticationManager))
             
-            // h2-console 사용 시 프레임 옵션 해제
             .headers(headers -> headers.frameOptions(frame -> frame.disable()));
 
-        // 커스텀 필터(AuthenticationFilter)가 있다면 여기서 addFilter로 추가해야 함
-        // http.addFilter(getAuthenticationFilter(authenticationManager));
-
         return http.build();
+    }
+
+    // 필터 인스턴스를 생성해주는 도우미 메서드
+    private AuthenticationFilter getAuthenticationFilter(AuthenticationManager authenticationManager) {
+        AuthenticationFilter authenticationFilter = 
+            new AuthenticationFilter(authenticationManager, userService, env);
+        // /login 대신 다른 주소로 로그인하고 싶다면 여기서 변경 가능 (기본값은 /login)
+        return authenticationFilter;
     }
 }
