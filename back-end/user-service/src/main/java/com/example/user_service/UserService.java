@@ -5,8 +5,6 @@ import com.example.user_service.jpa.UserEntity;
 import com.example.user_service.jpa.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,42 +15,43 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.UUID;
 
-@SpringBootApplication 
 @Service
 public class UserService implements UserDetailsService {
 
-    UserRepository userRepository;
-    PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
+    // 생성자 주입 방식 (권장)
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
-    public static void main(String[] args) {
-        SpringApplication.run(UserService.class, args);
-    }
-
-
     // 회원가입 메서드
     public UserDto createUser(UserDto userDto) {
         userDto.setUserId(UUID.randomUUID().toString());
-        
+
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        
+        // DTO -> Entity 변환
         UserEntity userEntity = mapper.map(userDto, UserEntity.class);
         
+        // 비밀번호 암호화 후 설정
         userEntity.setEncryptedPassword(passwordEncoder.encode(userDto.getPassword()));
+        
+        // DB 저장
         userRepository.save(userEntity);
 
-        UserDto returnUserDto = mapper.map(userEntity, UserDto.class);
-        return returnUserDto;
+        // Entity -> DTO 반환
+        return mapper.map(userEntity, UserDto.class);
     }
 
-    // 로그인 인증용 메서드
+    // 로그인 인증용 메서드 (Spring Security에서 사용)
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         UserEntity userEntity = userRepository.findByEmail(email);
+        
         if (userEntity == null) {
             throw new UsernameNotFoundException("User not found with email: " + email);
         }
@@ -61,9 +60,10 @@ public class UserService implements UserDetailsService {
                 true, true, true, true, new ArrayList<>());
     }
 
-    // AuthenticationFilter가 인증 성공 후 userId를 얻기 위해 호출
+    // 이메일로 사용자 정보 조회
     public UserDto getUserDetailsByEmail(String email) {
         UserEntity userEntity = userRepository.findByEmail(email);
+        
         if (userEntity == null) {
             throw new UsernameNotFoundException(email);
         }
@@ -71,7 +71,6 @@ public class UserService implements UserDetailsService {
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         
-        UserDto userDto = mapper.map(userEntity, UserDto.class);
-        return userDto;
+        return mapper.map(userEntity, UserDto.class);
     }
 }
