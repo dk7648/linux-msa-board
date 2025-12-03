@@ -36,6 +36,8 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         super.setAuthenticationManager(authenticationManager);
         this.userService = userService;
         this.env = env;
+
+        setFilterProcessesUrl("/users/login"); // 로그인 URL 설정
     }
 
     // 1. 로그인 시도: /login 요청이 오면 여기서 가로챕니다.

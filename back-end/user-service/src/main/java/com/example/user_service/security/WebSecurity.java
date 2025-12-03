@@ -40,7 +40,6 @@ public class WebSecurity {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/error").permitAll()
                 .requestMatchers("/users/**").permitAll()
-                .requestMatchers("/login").permitAll()
                 .requestMatchers("/h2-console/**").permitAll()
                 .requestMatchers("/actuator/**").permitAll()
                 .anyRequest().authenticated() // 나머지는 인증 필요
