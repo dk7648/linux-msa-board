@@ -4,16 +4,16 @@ import { useNavigate } from "react-router-dom";
 
 function Register() {
   const navigate = useNavigate();
-  const [username, setUsername] = useState('');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [displayName, setDisplayName] = useState('');
 
   const registerSubmit = async () => {
     try {
-      const response = await axios.post('http://localhost:8080/api/member/register', {
-        username,
-        password,
-        displayName
+      const response = await axios.post('http://localhost:9000/users', {
+        name,
+        email,
+        password
       }, {
         headers: {
           'Content-Type': 'application/json'
@@ -35,9 +35,9 @@ function Register() {
     <div>
       <input
         name="username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        placeholder="Username"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        placeholder="name"
       />
       <input
         name="password"
@@ -47,10 +47,10 @@ function Register() {
         placeholder="Password"
       />
       <input
-        name="displayName"
-        value={displayName}
-        onChange={(e) => setDisplayName(e.target.value)}
-        placeholder="DisplayName"
+        name="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="Email"
       />
       <button onClick={registerSubmit}>회원가입</button>
     </div>
