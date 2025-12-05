@@ -183,6 +183,24 @@ body {
     border-color: #5f37a5;
 }
 
+/* --- 5.5 로딩/에러/빈 상태 메시지 --- */
+.loading-message,
+.error-message,
+.empty-message {
+    text-align: center;
+    padding: 60px 20px;
+    font-size: 16px;
+    color: #6c757d;
+}
+
+.error-message {
+    color: #dc3545;
+}
+
+.empty-message {
+    color: #adb5bd;
+}
+
 /* --- 6. 하단 네비게이션 --- */
 .bottom-nav {
     display: grid;

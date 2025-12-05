@@ -17,6 +17,20 @@ client.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
+    
+    // Add user ID header if available
+    const userStr = localStorage.getItem('user')
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr)
+        if (user.id) {
+          config.headers['X-User-Id'] = user.id.toString()
+        }
+      } catch (e) {
+        console.error('Failed to parse user data:', e)
+      }
+    }
+    
     return config
   },
   (error) => {

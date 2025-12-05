@@ -3,20 +3,21 @@ server:
 
 spring:
   application:
-    name: article-service
-  config:
-    import: optional:file:.env[.properties]
+    name: ARTICLE-SERVICE
   profiles:
-    active: prod
+    active: dev
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-    driver-class-name: com.mysql.cj.jdbc.Driver
-
+    url: jdbc:h2:mem:articledb
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
   jpa:
     hibernate:
-      ddl-auto: update       # 개발 초기에는 update, 운영에서는 none
+      ddl-auto: create       # H2 메모리 DB용 - 시작시마다 스키마 생성
     show-sql: true           # SQL 콘솔 출력
     properties:
       hibernate:

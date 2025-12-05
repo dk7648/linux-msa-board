@@ -3,6 +3,8 @@ import { AuthProvider, useAuth } from './hooks/useAuth'
 import Auth from './pages/Auth'
 import Loading from './components/Loading'
 import Article from './pages/Article'
+import ArticleWrite from './pages/ArticleWrite'
+import ArticleDetail from './pages/ArticleDetail'
 
 // Protected Route Component
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -53,6 +55,22 @@ function App() {
             element={
               <ProtectedRoute>
                 <Article />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/posts/write"
+            element={
+              <ProtectedRoute>
+                <ArticleWrite />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/posts/:id"
+            element={
+              <ProtectedRoute>
+                <ArticleDetail />
               </ProtectedRoute>
             }
           />
