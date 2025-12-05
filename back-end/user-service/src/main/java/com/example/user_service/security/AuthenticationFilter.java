@@ -86,5 +86,23 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         // 헤더에 토큰과 userId를 담아서 응답
         response.addHeader("token", token);
         response.addHeader("userId", userDetails.getUserId());
+        
+        // 프론트엔드를 위한 JSON 응답 추가
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        
+        String jsonResponse = String.format(
+            "{\"user\":{\"id\":1,\"email\":\"%s\",\"username\":\"%s\",\"fullName\":\"%s\",\"createdAt\":\"%s\",\"updatedAt\":\"%s\"},\"token\":\"%s\",\"refreshToken\":\"%s\"}",
+            userDetails.getEmail(),
+            userDetails.getName(),
+            userDetails.getName(),
+            new Date().toInstant().toString(),
+            new Date().toInstant().toString(),
+            token,
+            "refresh-" + token
+        );
+        
+        response.getWriter().write(jsonResponse);
+        response.getWriter().flush();
     }
 }
