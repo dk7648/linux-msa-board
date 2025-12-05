@@ -30,6 +30,13 @@ body {
     padding: 10px 16px; background-color: #dc3545; color: white;
     border: none; border-radius: 8px; cursor: pointer;
     font-weight: 500; font-size: 14px;
+    transition: background-color 0.2s;
+}
+.logout-btn:hover {
+    background-color: #c82333;
+}
+.logout-btn:active {
+    background-color: #bd2130;
 }
 
 /* --- 3. 메인 컨텐츠 --- */

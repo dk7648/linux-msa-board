@@ -7,7 +7,6 @@ import {
 } from 'react'
 import type { User, LoginRequest, RegisterRequest } from '@/types/user'
 import { userApi } from '@/api/user'
-import { serviceLogger, callServiceWithLogging } from '@/services/serviceLogger'
 
 interface AuthContextType {
   user: User | null
@@ -31,18 +30,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const initAuth = async () => {
       const token = localStorage.getItem('token')
-      if (token) {
+      const savedUser = localStorage.getItem('user')
+      
+      if (token && savedUser) {
         try {
-          const currentUser = await callServiceWithLogging(
-            'USER',
-            'GET_CURRENT_USER',
-            () => userApi.getCurrentUser()
-          )
-          setUser(currentUser)
+          // localStorage에 저장된 사용자 정보 사용
+          setUser(JSON.parse(savedUser))
         } catch (error) {
-          console.error('Failed to get current user:', error)
+          console.error('Failed to parse saved user:', error)
           localStorage.removeItem('token')
           localStorage.removeItem('refreshToken')
+          localStorage.removeItem('user')
         }
       }
       setIsLoading(false)
@@ -52,69 +50,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const login = async (data: LoginRequest) => {
-    const flowId = serviceLogger.startFlow('USER_LOGIN')
-
     try {
-      const response = await callServiceWithLogging(
-        'USER',
-        'LOGIN',
-        () => userApi.login(data),
-        flowId
-      )
-
+      const response = await userApi.login(data)
       setUser(response.user)
-      serviceLogger.completeFlow(flowId, 'completed')
+      // localStorage에 사용자 정보 저장
+      localStorage.setItem('user', JSON.stringify(response.user))
     } catch (error) {
-      serviceLogger.completeFlow(flowId, 'failed')
       throw error
     }
   }
 
   const register = async (data: RegisterRequest) => {
-    const flowId = serviceLogger.startFlow('USER_REGISTER')
-
     try {
-      const response = await callServiceWithLogging(
-        'USER',
-        'REGISTER',
-        () => userApi.register(data),
-        flowId
-      )
-
+      const response = await userApi.register(data)
       setUser(response.user)
-      serviceLogger.completeFlow(flowId, 'completed')
+      // localStorage에 사용자 정보 저장
+      localStorage.setItem('user', JSON.stringify(response.user))
     } catch (error) {
-      serviceLogger.completeFlow(flowId, 'failed')
       throw error
     }
   }
 
   const logout = async () => {
-    const flowId = serviceLogger.startFlow('USER_LOGOUT')
-
     try {
-      await callServiceWithLogging(
-        'USER',
-        'LOGOUT',
-        () => userApi.logout(),
-        flowId
-      )
-
-      setUser(null)
-      serviceLogger.completeFlow(flowId, 'completed')
+      await userApi.logout()
     } catch (error) {
-      serviceLogger.completeFlow(flowId, 'failed')
-      throw error
+      console.error('Logout API call failed:', error)
+    } finally {
+      // API 실패 여부와 관계없이 로컬 상태는 정리
+      setUser(null)
+      localStorage.removeItem('user')
     }
   }
 
   const refreshUser = async () => {
     try {
-      const currentUser = await callServiceWithLogging(
-        'USER',
-        'GET_CURRENT_USER',
-        () => userApi.getCurrentUser()
-      )
+      const currentUser = await userApi.getCurrentUser()
       setUser(currentUser)
     } catch (error) {
       console.error('Failed to refresh user:', error)

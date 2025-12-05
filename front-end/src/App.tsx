@@ -1,10 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './hooks/useAuth'
 import Auth from './pages/Auth'
-import Dashboard from './pages/Dashboard'
-import Metrics from './pages/Metrics'
 import Loading from './components/Loading'
-import View from './pages/View'
 import Article from './pages/Article'
 
 // Protected Route Component
@@ -31,7 +28,7 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
   }
 
   if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />
+    return <Navigate to="/posts" replace />
   }
 
   return <>{children}</>
@@ -42,7 +39,7 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <Routes>
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route path="/" element={<Navigate to="/posts" replace />} />
           <Route
             path="/auth"
             element={
@@ -52,41 +49,15 @@ function App() {
             }
           />
           <Route
-            path="/dashboard"
+            path="/posts"
             element={
               <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/metrics"
-            element={
-              <ProtectedRoute>
-                <Metrics />
-              </ProtectedRoute>
-            }
-          />
-          {/*MSA시각화 추가*/}
-          <Route
-            path="/msa-visualization"
-            element={
-              <ProtectedRoute>
-                <View />
+                <Article />
               </ProtectedRoute>
             }
           />
 
-          <Route
-          path="/articles-list"
-          element={
-            <ProtectedRoute>
-              <Article />
-            </ProtectedRoute>
-          }
-        />
-
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          <Route path="*" element={<Navigate to="/posts" replace />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

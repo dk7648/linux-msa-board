@@ -8,7 +8,7 @@ import type {
 } from '@/types/user'
 import { mockUserApi, USE_MOCK_API } from '@/mocks/mockUserApi'
 
-const USER_SERVICE_URL = '/v1/users'
+const USER_SERVICE_URL = '/users'
 
 export const userApi = {
   // 회원가입
