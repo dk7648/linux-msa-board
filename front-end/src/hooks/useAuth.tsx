@@ -30,14 +30,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const initAuth = async () => {
       const token = localStorage.getItem('token')
-      if (token) {
+      const savedUser = localStorage.getItem('user')
+      
+      if (token && savedUser) {
         try {
-          const currentUser = await userApi.getCurrentUser()
-          setUser(currentUser)
+          // localStorage에 저장된 사용자 정보 사용
+          setUser(JSON.parse(savedUser))
         } catch (error) {
-          console.error('Failed to get current user:', error)
+          console.error('Failed to parse saved user:', error)
           localStorage.removeItem('token')
           localStorage.removeItem('refreshToken')
+          localStorage.removeItem('user')
         }
       }
       setIsLoading(false)
@@ -50,6 +53,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const response = await userApi.login(data)
       setUser(response.user)
+      // localStorage에 사용자 정보 저장
+      localStorage.setItem('user', JSON.stringify(response.user))
     } catch (error) {
       throw error
     }
@@ -59,6 +64,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const response = await userApi.register(data)
       setUser(response.user)
+      // localStorage에 사용자 정보 저장
+      localStorage.setItem('user', JSON.stringify(response.user))
     } catch (error) {
       throw error
     }
@@ -67,9 +74,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = async () => {
     try {
       await userApi.logout()
-      setUser(null)
     } catch (error) {
-      throw error
+      console.error('Logout API call failed:', error)
+    } finally {
+      // API 실패 여부와 관계없이 로컬 상태는 정리
+      setUser(null)
+      localStorage.removeItem('user')
     }
   }
 

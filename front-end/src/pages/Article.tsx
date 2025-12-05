@@ -1,4 +1,6 @@
 import React from 'react'
+import { useNavigate } from 'react-router'
+import { useAuth } from '@/hooks/useAuth'
 import '@/styles/Article.css'
 
 // 발표용 Mock 데이터 (기존 HTML 테이블 내용을 배열로 변환)
@@ -49,17 +51,37 @@ const paginationData = [
 ]
 
 const Article: React.FC = () => {
+  const { user, logout } = useAuth()
+  const navigate = useNavigate()
+
+  const handleLogout = async () => {
+    try {
+      await logout()
+      navigate('/auth/login')
+    } catch (error) {
+      console.error('Logout failed:', error)
+    }
+  }
+
+  // 사용자 이름에서 첫 글자 추출 (아바타용)
+  const getUserInitial = () => {
+    if (!user) return '?'
+    return user.fullName?.[0] || user.username?.[0] || '?'
+  }
+
   return (
     <>
       <header className="main-header">
         <h1>게시글 목록</h1>
         <div className="user-profile">
-          <div className="user-avatar">테</div>
+          <div className="user-avatar">{getUserInitial()}</div>
           <div className="user-info">
-            <span className="username">테스트 사용자</span>
-            <span className="email">test@example.com</span>
+            <span className="username">{user?.fullName || user?.username || '사용자'}</span>
+            <span className="email">{user?.email || ''}</span>
           </div>
-          <button className="logout-btn">로그아웃</button>
+          <button className="logout-btn" onClick={handleLogout}>
+            로그아웃
+          </button>
         </div>
       </header>
 
