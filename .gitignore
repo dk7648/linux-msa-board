@@ -1,1 +1,6 @@
-".env" 
+"".env"
+
+# Changelog files
+CHANGELOG.md
+CHANGELOG_*.md
+" 
