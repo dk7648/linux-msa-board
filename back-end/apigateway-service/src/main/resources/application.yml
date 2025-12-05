@@ -6,23 +6,6 @@ spring:
     name: apigateway-service
   cloud:
     gateway:
-      globalcors:
-        add-to-simple-url-handler-mapping: true   # ⭐ 추가
-        cors-configurations:
-          '[/**]':
-            allowedOrigins:
-              - "http://localhost:5173"
-              - "http://localhost:5174"
-              - "http://localhost:5175"
-            allowedMethods:
-              - "*"
-            allowedHeaders:
-              - "*"
-            allowCredentials: true
-            exposedHeaders:
-              - token
-              - Authorization
-
       server:
         webmvc:
           routes:
@@ -38,6 +21,23 @@ spring:
               uri: lb://COMMENT-SERVICE
               predicates:
                 - Path=/comments/**
+      
+      globalcors:
+        add-to-simple-url-handler-mapping: true
+        cors-configurations:
+          '[/**]':
+            allowedOrigins:
+              - "http://localhost:5173"
+              - "http://localhost:5174"
+              - "http://localhost:5175"
+            allowedMethods:
+              - "*"
+            allowedHeaders:
+              - "*"
+            allowCredentials: true
+            exposedHeaders:
+              - token
+              - Authorization
 
     discovery:
       enabled: true

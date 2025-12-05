@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: user-service  # Gateway(lb://USER-SERVICE)와 매칭
+    name: USER-SERVICE  # Gateway(lb://USER-SERVICE)와 매칭
 
   datasource:
     # AWS RDS 연결 설정
