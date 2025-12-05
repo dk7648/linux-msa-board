@@ -36,11 +36,14 @@ public class UserRestController {
             
             UserDto createdUser = userService.createUser(userDto);
             
+            // 실제 생성된 사용자의 ID 조회
+            Long userId = userService.getUserIdByEmail(createdUser.getEmail());
+            
             // 프론트엔드 응답 형식에 맞춤
             Map<String, Object> response = new HashMap<>();
             
             Map<String, Object> userMap = new HashMap<>();
-            userMap.put("id", 1); // 임시 ID
+            userMap.put("id", userId);
             userMap.put("email", createdUser.getEmail());
             userMap.put("username", createdUser.getName());
             userMap.put("fullName", createdUser.getName());
@@ -57,6 +60,30 @@ public class UserRestController {
             Map<String, String> error = new HashMap<>();
             error.put("message", "회원가입에 실패했습니다: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
+    }
+
+    /**
+     * ID로 사용자 정보 조회 API
+     * GET /users/{id}
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getUserById(@PathVariable Long id) {
+        try {
+            UserDto user = userService.getUserById(id);
+            
+            // UserDto에서 실제 데이터 반환
+            Map<String, Object> response = new HashMap<>();
+            response.put("id", id);
+            response.put("email", user.getEmail());
+            response.put("username", user.getUsername());  // UserDto의 username
+            response.put("fullName", user.getFullName());  // UserDto의 fullName
+            
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("message", "사용자를 찾을 수 없습니다: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
         }
     }
 

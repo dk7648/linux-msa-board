@@ -47,6 +47,23 @@ public class UserService implements UserDetailsService {
         return mapper.map(userEntity, UserDto.class);
     }
 
+    // ID로 사용자 조회
+    public UserDto getUserById(Long id) {
+        UserEntity userEntity = userRepository.findById(id)
+            .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + id));
+        
+        ModelMapper mapper = new ModelMapper();
+        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        
+        UserDto userDto = mapper.map(userEntity, UserDto.class);
+        
+        // name 값을 username과 fullName에도 설정
+        userDto.setUsername(userEntity.getName());
+        userDto.setFullName(userEntity.getName());
+        
+        return userDto;
+    }
+
     // 로그인 인증용 메서드 (Spring Security에서 사용)
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -72,5 +89,16 @@ public class UserService implements UserDetailsService {
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         
         return mapper.map(userEntity, UserDto.class);
+    }
+    
+    // 이메일로 사용자 ID 조회
+    public Long getUserIdByEmail(String email) {
+        UserEntity userEntity = userRepository.findByEmail(email);
+        
+        if (userEntity == null) {
+            throw new UsernameNotFoundException(email);
+        }
+        
+        return userEntity.getId();
     }
 }

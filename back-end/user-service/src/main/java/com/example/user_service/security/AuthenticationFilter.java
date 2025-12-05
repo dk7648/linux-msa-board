@@ -87,12 +87,16 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         response.addHeader("token", token);
         response.addHeader("userId", userDetails.getUserId());
         
+        // 실제 사용자 ID 조회
+        Long userId = userService.getUserIdByEmail(userDetails.getEmail());
+        
         // 프론트엔드를 위한 JSON 응답 추가
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         
         String jsonResponse = String.format(
-            "{\"user\":{\"id\":1,\"email\":\"%s\",\"username\":\"%s\",\"fullName\":\"%s\",\"createdAt\":\"%s\",\"updatedAt\":\"%s\"},\"token\":\"%s\",\"refreshToken\":\"%s\"}",
+            "{\"user\":{\"id\":%d,\"email\":\"%s\",\"username\":\"%s\",\"fullName\":\"%s\",\"createdAt\":\"%s\",\"updatedAt\":\"%s\"},\"token\":\"%s\",\"refreshToken\":\"%s\"}",
+            userId,
             userDetails.getEmail(),
             userDetails.getName(),
             userDetails.getName(),

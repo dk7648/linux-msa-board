@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router'
 import { useAuth } from '@/hooks/useAuth'
 import { articleApi } from '@/api/article'
+import { getUserDisplayName } from '@/utils/userDisplay'
 import type { Article as ArticleType } from '@/types/article'
 import '@/styles/Article.css'
 
@@ -16,7 +17,26 @@ const Article: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
+  const [userNames, setUserNames] = useState<Record<number, string>>({})
   const pageSize = 10
+
+  // 사용자 이름 로드
+  useEffect(() => {
+    const loadUserNames = async () => {
+      const names: Record<number, string> = {}
+      for (const article of articles) {
+        if (!userNames[article.userId]) {
+          names[article.userId] = await getUserDisplayName(article.userId)
+        }
+      }
+      if (Object.keys(names).length > 0) {
+        setUserNames((prev) => ({ ...prev, ...names }))
+      }
+    }
+    if (articles.length > 0) {
+      loadUserNames()
+    }
+  }, [articles])
 
   // 게시글 목록 가져오기
   const fetchArticles = async () => {
@@ -153,7 +173,9 @@ const Article: React.FC = () => {
                     >
                       <td>{article.id}</td>
                       <td>{article.title}</td>
-                      <td>사용자 {article.userId}</td>
+                      <td>
+                        {userNames[article.userId] || `사용자 ${article.userId}`}
+                      </td>
                       <td>
                         {new Date(article.createdAt).toLocaleDateString(
                           'ko-KR'

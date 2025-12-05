@@ -29,8 +29,20 @@ export const articleApi = {
   },
 
   // 게시글 작성
-  createArticle: async (data: CreateArticleRequest): Promise<Article> => {
-    const response = await client.post<Article>(ARTICLE_SERVICE_URL, data)
+  createArticle: async (
+    data: CreateArticleRequest,
+    userId?: number
+  ): Promise<Article> => {
+    console.log('[articleApi] createArticle called with userId:', userId)
+    const headers: Record<string, string> = {}
+    if (userId) {
+      headers['X-User-Id'] = userId.toString()
+      console.log('[articleApi] Setting X-User-Id header:', headers['X-User-Id'])
+    }
+    console.log('[articleApi] Request headers:', headers)
+    const response = await client.post<Article>(ARTICLE_SERVICE_URL, data, {
+      headers,
+    })
     return response.data
   },
 

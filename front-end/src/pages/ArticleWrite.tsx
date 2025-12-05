@@ -39,10 +39,23 @@ const ArticleWrite: React.FC = () => {
       setIsSubmitting(true)
       setError(null)
       
-      await articleApi.createArticle({
-        title: title.trim(),
-        content: content.trim(),
-      })
+      console.log('[ArticleWrite] Current user object:', user)
+      console.log('[ArticleWrite] User ID:', user?.id)
+      
+      if (!user?.id) {
+        setError('로그인 정보가 없습니다.')
+        return
+      }
+      
+      console.log('[ArticleWrite] Sending article with userId:', user.id)
+      
+      await articleApi.createArticle(
+        {
+          title: title.trim(),
+          content: content.trim(),
+        },
+        user.id
+      )
       
       // 작성 완료 후 목록 페이지로 이동
       navigate('/posts')
