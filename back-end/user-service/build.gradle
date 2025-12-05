@@ -15,7 +15,7 @@ java {
 }
 
 springBoot {
-    mainClass = 'com.example.user_service.UserService'
+    mainClass = 'com.example.user_service.UserServiceApplication'
 }
 
 repositories {
