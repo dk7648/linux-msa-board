@@ -99,5 +99,5 @@ export const mockUserApi = {
   },
 }
 
-// 개발 모드에서 Mock API 사용 여부
-export const USE_MOCK_API = import.meta.env.DEV
+// Mock API 비활성화 - 실제 백엔드 사용
+export const USE_MOCK_API = false

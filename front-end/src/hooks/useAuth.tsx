@@ -7,7 +7,6 @@ import {
 } from 'react'
 import type { User, LoginRequest, RegisterRequest } from '@/types/user'
 import { userApi } from '@/api/user'
-import { serviceLogger, callServiceWithLogging } from '@/services/serviceLogger'
 
 interface AuthContextType {
   user: User | null
@@ -33,11 +32,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const token = localStorage.getItem('token')
       if (token) {
         try {
-          const currentUser = await callServiceWithLogging(
-            'USER',
-            'GET_CURRENT_USER',
-            () => userApi.getCurrentUser()
-          )
+          const currentUser = await userApi.getCurrentUser()
           setUser(currentUser)
         } catch (error) {
           console.error('Failed to get current user:', error)
@@ -52,69 +47,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const login = async (data: LoginRequest) => {
-    const flowId = serviceLogger.startFlow('USER_LOGIN')
-
     try {
-      const response = await callServiceWithLogging(
-        'USER',
-        'LOGIN',
-        () => userApi.login(data),
-        flowId
-      )
-
+      const response = await userApi.login(data)
       setUser(response.user)
-      serviceLogger.completeFlow(flowId, 'completed')
     } catch (error) {
-      serviceLogger.completeFlow(flowId, 'failed')
       throw error
     }
   }
 
   const register = async (data: RegisterRequest) => {
-    const flowId = serviceLogger.startFlow('USER_REGISTER')
-
     try {
-      const response = await callServiceWithLogging(
-        'USER',
-        'REGISTER',
-        () => userApi.register(data),
-        flowId
-      )
-
+      const response = await userApi.register(data)
       setUser(response.user)
-      serviceLogger.completeFlow(flowId, 'completed')
     } catch (error) {
-      serviceLogger.completeFlow(flowId, 'failed')
       throw error
     }
   }
 
   const logout = async () => {
-    const flowId = serviceLogger.startFlow('USER_LOGOUT')
-
     try {
-      await callServiceWithLogging(
-        'USER',
-        'LOGOUT',
-        () => userApi.logout(),
-        flowId
-      )
-
+      await userApi.logout()
       setUser(null)
-      serviceLogger.completeFlow(flowId, 'completed')
     } catch (error) {
-      serviceLogger.completeFlow(flowId, 'failed')
       throw error
     }
   }
 
   const refreshUser = async () => {
     try {
-      const currentUser = await callServiceWithLogging(
-        'USER',
-        'GET_CURRENT_USER',
-        () => userApi.getCurrentUser()
-      )
+      const currentUser = await userApi.getCurrentUser()
       setUser(currentUser)
     } catch (error) {
       console.error('Failed to refresh user:', error)
